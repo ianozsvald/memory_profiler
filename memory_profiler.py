@@ -527,12 +527,16 @@ def magic_memit(self, line=''):
 if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage=_CMD_USAGE)
+    parser.add_option("--pdb-mmem", dest="mmem", metavar="MAXMEM",
+        type="int", action="store",
+        help="step into the debugger when memory exceeds MAXMEM")
 
     if not sys.argv[1:]:
         parser.print_help()
         sys.exit(2)
 
     (options, args) = parser.parse_args()
+    sys.argv[:] = args
 
     # .. remove memory_profiler from sys.argv ..
     sys.argv.pop(0)
