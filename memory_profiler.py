@@ -48,14 +48,15 @@ def _get_memory(pid, timestamps=False, include_children=False):
         process = psutil.Process(pid)
         try:
             # fetch IO data from psutil
-            data = psutil.net_io_counters()
-            # combine input and output
-            network_bytes_sent_received = data[0] + data[1]
+            data = psutil.disk_io_counters()
+            # combine input and output bytes
+            disk_bytes_read_written = data[2] + data[3]
             if previous_data is None:
-                previous_data = network_bytes_sent_received
-            mem = network_bytes_sent_received - previous_data
+                previous_data = disk_bytes_read_written
+            mem = disk_bytes_read_written
+            mem = disk_bytes_read_written - previous_data
             mem = mem / _TWO_20
-            previous_data = network_bytes_sent_received
+            previous_data = disk_bytes_read_written
 
             #mem = process.get_memory_info()[0] / _TWO_20
 
