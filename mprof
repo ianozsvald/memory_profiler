@@ -435,7 +435,7 @@ def plot_action():
     for n, filename in enumerate(filenames):
         mprofile = plot_file(filename, index=n, timestamps=timestamps)
     pl.xlabel("time (in seconds)")
-    pl.ylabel("memory used (in MiB)")
+    pl.ylabel("I/O (in MiB)")
 
     if options.title is None and len(filenames) == 1:
         pl.title(mprofile['cmd_line'])

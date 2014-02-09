@@ -34,8 +34,10 @@ try:
 except ImportError:
     pass
 
+previous_data = None
 
 def _get_memory(pid, timestamps=False, include_children=False):
+    global previous_data
 
     # .. only for current process and only on unix..
     if pid == -1:
@@ -45,7 +47,18 @@ def _get_memory(pid, timestamps=False, include_children=False):
     if has_psutil:
         process = psutil.Process(pid)
         try:
-            mem = process.get_memory_info()[0] / _TWO_20
+            # fetch IO data from psutil
+            data = psutil.net_io_counters()
+            # combine input and output
+            network_bytes_sent_received = data[0] + data[1]
+            if previous_data is None:
+                previous_data = network_bytes_sent_received
+            mem = network_bytes_sent_received - previous_data
+            mem = mem / _TWO_20
+            previous_data = network_bytes_sent_received
+
+            #mem = process.get_memory_info()[0] / _TWO_20
+
             if include_children:
                 for p in process.get_children(recursive=True):
                     mem += p.get_memory_info()[0] / _TWO_20
